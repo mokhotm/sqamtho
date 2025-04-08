@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import { useTheme } from "@/hooks/use-theme";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Bell, MessageCircle, ChevronDown, Home, Compass, Users, Calendar } from "lucide-react";
 import { useState } from "react";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { SouthAfricanPattern } from "./ui/south-african-pattern";
+import { SqamthoLogo, SqamthoLogoWithStyle } from "./ui/sqamtho-logo";
 
 export default function Header() {
   const { user, logoutMutation } = useAuth();
@@ -28,15 +30,17 @@ export default function Header() {
     console.log("Searching for:", searchQuery);
   };
 
+  const { theme } = useTheme();
+  
   return (
     <>
       {/* Mobile Header */}
-      <header className="md:hidden bg-white shadow-md z-30 fixed top-0 left-0 right-0">
+      <header className="md:hidden bg-white dark:bg-gray-900 shadow-md z-30 fixed top-0 left-0 right-0">
         <SouthAfricanPattern className="h-2" />
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center">
-              <span className="text-xl font-bold text-primary font-poppins tracking-wide">Sqamtho</span>
+              <SqamthoLogoWithStyle size={30} textColor={theme === 'dark' ? '#f3f4f6' : undefined} />
             </Link>
             <div className="flex items-center space-x-2">
               <button className="p-2 rounded-full bg-gray-50 text-gray-600 hover:bg-primary/10 hover:text-primary">
@@ -52,13 +56,13 @@ export default function Header() {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:block fixed top-0 left-0 right-0 bg-white shadow-md z-40">
+      <header className="hidden md:block fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-md z-40">
         <SouthAfricanPattern className="h-2" />
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
-                <span className="text-2xl font-bold text-primary tracking-wide">Sqamtho</span>
+                <SqamthoLogoWithStyle size={40} textColor={theme === 'dark' ? '#f3f4f6' : undefined} />
               </Link>
               <div className="ml-10">
                 <div className="flex items-center space-x-2">
@@ -112,9 +116,9 @@ export default function Header() {
                 <DropdownMenuTrigger asChild>
                   <div className="ml-4 flex items-center p-1.5 rounded-full hover:bg-gray-100 cursor-pointer transition-colors duration-200">
                     <Avatar className="h-8 w-8 ring-2 ring-primary/20">
-                      <AvatarImage src={user?.profilePicture} alt={user?.displayName || user?.username} />
+                      <AvatarImage src={user?.profilePicture || ''} alt={user?.displayName || user?.username || ''} />
                       <AvatarFallback className="bg-primary/90 text-white">
-                        {user?.displayName?.charAt(0) || user?.username?.charAt(0)}
+                        {user?.displayName?.charAt(0) || user?.username?.charAt(0) || '?'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="ml-2 mr-1">
