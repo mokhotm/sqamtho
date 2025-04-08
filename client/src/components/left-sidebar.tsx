@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Users, Bookmark, Clock, ShoppingBag, Camera, Heart, Music, Video, Star } from "lucide-react";
+import { User, Users, Bookmark, Clock, ShoppingBag, Camera, Heart, Music, Video, Star, Settings } from "lucide-react";
 import { SouthAfricanAccent } from "./ui/south-african-pattern";
 
 export default function LeftSidebar() {
@@ -107,6 +107,19 @@ export default function LeftSidebar() {
                 </div>
                 <div className="ml-3">
                   <span className="font-medium text-sm">Marketplace</span>
+                </div>
+              </Link>
+            </li>
+            <li>
+              <Link 
+                href="/settings" 
+                className={`nav-item flex items-center px-4 py-3 ${location === "/settings" ? "nav-item-active" : ""}`}
+              >
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Settings className="h-4 w-4 text-primary" />
+                </div>
+                <div className="ml-3">
+                  <span className="font-medium text-sm">Settings</span>
                 </div>
               </Link>
             </li>
