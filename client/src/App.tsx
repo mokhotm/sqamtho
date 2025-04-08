@@ -16,6 +16,12 @@ function Router() {
       <ProtectedRoute path="/" component={HomePage} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/messages" component={MessagesPage} />
+      <ProtectedRoute path="/friends" component={ProfilePage} /> {/* Redirect to profile for now */}
+      <ProtectedRoute path="/saved-posts" component={HomePage} /> {/* Redirect to home for now */}
+      <ProtectedRoute path="/memories" component={HomePage} /> {/* Redirect to home for now */}
+      <ProtectedRoute path="/marketplace" component={HomePage} /> {/* Redirect to home for now */}
+      <ProtectedRoute path="/communities/:id" component={HomePage} /> {/* Redirect to home for now */}
+      <ProtectedRoute path="/communities" component={HomePage} /> {/* Redirect to home for now */}
       <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
