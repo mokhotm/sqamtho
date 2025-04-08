@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { FileUpload } from "@/components/ui/file-upload";
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<string>("login");
@@ -250,9 +251,14 @@ export default function AuthPage() {
                       name="profilePicture"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Profile Picture URL (Optional)</FormLabel>
+                          <FormLabel>Profile Picture (Optional)</FormLabel>
                           <FormControl>
-                            <Input placeholder="https://example.com/your-picture.jpg" {...field} />
+                            <FileUpload 
+                              onFileSelect={(fileData) => {
+                                field.onChange(fileData || "");
+                              }}
+                              defaultValue={field.value}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
