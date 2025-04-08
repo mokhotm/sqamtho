@@ -46,13 +46,23 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
     fileInputRef.current?.click();
   };
   
-  // Create a new input element that directly opens the camera
+  // This function attempts to access the camera in a way that works across devices
   const triggerCameraInput = () => {
-    // On mobile, we need to create a new input each time to reliably trigger the camera
+    // Create a dynamic input element with webcam access attributes
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = 'image/*';
-    input.capture = 'environment'; // This tells mobile devices to use the camera
+    
+    // For best cross-platform compatibility:
+    // - On mobile, 'image/*' + 'capture' attribute opens the camera directly
+    // - On desktops, we need to include 'video/*' to hint at camera access
+    input.accept = 'image/*, video/*';
+    
+    // On supported mobile browsers, this will prefer the camera
+    // Note: In desktop browsers, this may not do anything special
+    if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
+      // Use environment (back) camera on mobile devices
+      input.setAttribute('capture', 'environment');
+    }
     
     input.onchange = (e) => {
       const target = e.target as HTMLInputElement;
@@ -83,9 +93,10 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
           variant="outline" 
           onClick={triggerCameraInput}
           className="flex-1"
+          title="On desktop, this will open your file browser to select an image. On mobile devices, this will open your camera app."
         >
           <Camera className="h-4 w-4 mr-2" />
-          Take Photo
+          {navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) ? "Take Photo" : "Camera/Photo"}
         </Button>
         
         {/* File input for regular uploads */}
@@ -96,6 +107,12 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
           onChange={handleFileChange}
           className="hidden"
         />
+      </div>
+      
+      <div className="text-xs text-gray-500 mt-1 text-center">
+        {navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) 
+          ? "Camera access requires permission from your device" 
+          : "On desktop, both buttons open the file selector. On mobile, Camera opens your device camera."}
       </div>
       
       {preview && (
