@@ -221,48 +221,57 @@ export default function AuthPage() {
                     <FormField
                       control={registerForm.control}
                       name="bio"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Bio (Optional)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Tell us about yourself" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      render={({ field }) => {
+                        const { value, ...restField } = field;
+                        return (
+                          <FormItem>
+                            <FormLabel>Bio (Optional)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Tell us about yourself" {...restField} value={value || ""} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
                     />
                     
                     <FormField
                       control={registerForm.control}
                       name="location"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Location (Optional)</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your city or province" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      render={({ field }) => {
+                        const { value, ...restField } = field;
+                        return (
+                          <FormItem>
+                            <FormLabel>Location (Optional)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your city or province" {...restField} value={value || ""} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
                     />
                     
                     <FormField
                       control={registerForm.control}
                       name="profilePicture"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Profile Picture (Optional)</FormLabel>
-                          <FormControl>
-                            <FileUpload 
-                              onFileSelect={(fileData) => {
-                                field.onChange(fileData || "");
-                              }}
-                              defaultValue={field.value}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                      render={({ field }) => {
+                        const { value, ...restField } = field;
+                        return (
+                          <FormItem>
+                            <FormLabel>Profile Picture (Optional)</FormLabel>
+                            <FormControl>
+                              <FileUpload 
+                                onFileSelect={(fileData) => {
+                                  field.onChange(fileData || "");
+                                }}
+                                defaultValue={value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
                     />
                     
                     <Button

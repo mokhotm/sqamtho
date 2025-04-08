@@ -5,7 +5,7 @@ import { Camera, Upload, X, Check } from "lucide-react";
 
 interface FileUploadProps {
   onFileSelect: (fileData: string | null) => void;
-  defaultValue?: string;
+  defaultValue?: string | undefined;
   className?: string;
 }
 
@@ -49,6 +49,7 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
   };
   
   const triggerCameraInput = () => {
+    // We use a different input specifically for camera capture
     cameraInputRef.current?.click();
   };
 
@@ -75,6 +76,7 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
           Take Photo
         </Button>
         
+        {/* File input for regular uploads */}
         <Input
           type="file"
           accept="image/*"
@@ -83,10 +85,11 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
           className="hidden"
         />
         
+        {/* Dedicated camera input with 'capture' attribute set to 'environment' (back camera) */}
         <Input
           type="file"
           accept="image/*"
-          capture="user" // This enables the camera on supported devices
+          capture="environment"
           ref={cameraInputRef}
           onChange={handleFileChange}
           className="hidden"
