@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap');
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -10,20 +12,20 @@
     --card-foreground: 0 0% 13%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 13%;
-    --primary: 122 51% 49%;
+    --primary: 24 100% 57%; /* FF7722 Orange */
     --primary-foreground: 0 0% 100%;
-    --secondary: 5 80% 63%;
+    --secondary: 196 100% 47%; /* 00AAEE Blue */
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
-    --accent: 50 100% 50%;
+    --accent: 50 100% 62%; /* FFEB3B Yellow */
     --accent-foreground: 0 0% 13%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 88%;
     --input: 0 0% 88%;
-    --ring: 122 51% 49%;
-    --radius: 0.5rem;
+    --ring: 24 100% 57%;
+    --radius: 0.75rem;
   }
 
   * {
@@ -31,7 +33,7 @@
   }
 
   body {
-    @apply bg-gray-100 text-foreground antialiased;
+    @apply bg-gray-50 text-foreground antialiased;
     font-family: 'Ubuntu', sans-serif;
   }
 
@@ -39,31 +41,124 @@
     font-family: 'Poppins', sans-serif;
     @apply font-medium;
   }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 119, 34, 0.5);
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 119, 34, 0.8);
+  }
+}
+
+@layer components {
+  /* Card animations and effects */
+  .animate-card-hover {
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  /* Button animations */
+  .btn-pulse {
+    animation: pulse 1.5s infinite;
+  }
+  
+  /* South African inspired border */
+  .sa-border {
+    @apply relative;
+  }
+  
+  .sa-border::before {
+    content: '';
+    @apply absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-secondary;
+  }
+  
+  /* Post card enhancements */
+  .post-card {
+    @apply rounded-xl relative overflow-hidden border border-gray-200 animate-card-hover;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Nav item styling */
+  .nav-item {
+    @apply relative px-3 py-2 rounded-lg transition-all duration-200;
+  }
+  
+  .nav-item-active {
+    @apply bg-primary bg-opacity-10 text-primary;
+  }
+  
+  .nav-item-active::before {
+    content: '';
+    @apply absolute left-0 top-0 h-full w-1 bg-primary rounded-l-lg;
+  }
+  
+  .nav-item:hover:not(.nav-item-active) {
+    @apply bg-gray-100;
+  }
 }
 
 /* South African pattern inspired design elements */
-.sa-pattern-top {
-  background-image: linear-gradient(45deg, #4CAF50 25%, transparent 25%, transparent 50%, #4CAF50 50%, #4CAF50 75%, transparent 75%, transparent);
-  background-size: 20px 20px;
-  height: 8px;
+.sa-pattern-bg {
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FF7722' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-.sa-pattern-accent {
-  background-image: linear-gradient(45deg, #FFD700 25%, transparent 25%, transparent 50%, #FFD700 50%, #FFD700 75%, transparent 75%, transparent);
-  background-size: 20px 20px;
-  height: 4px;
-  width: 60px;
+/* Animation keyframes */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
 }
 
-/* Chat bubble styles */
+/* Chat bubble styles with enhanced design */
 .chat-bubble-sent {
   position: relative;
-  background: #E8F5E9;
-  border-radius: 8px 8px 0 8px;
+  background: rgba(255, 119, 34, 0.1);
+  border-radius: 18px 18px 0 18px;
+  border: 1px solid rgba(255, 119, 34, 0.2);
+}
+
+.chat-bubble-sent::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: -10px;
+  width: 10px;
+  height: 15px;
+  border-left: 10px solid rgba(255, 119, 34, 0.1);
+  border-bottom-left-radius: 16px;
 }
 
 .chat-bubble-received {
   position: relative;
-  background: #F5F5F5;
-  border-radius: 8px 8px 8px 0;
+  background: rgba(0, 170, 238, 0.1);
+  border-radius: 18px 18px 18px 0;
+  border: 1px solid rgba(0, 170, 238, 0.2);
+}
+
+.chat-bubble-received::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -10px;
+  width: 10px;
+  height: 15px;
+  border-right: 10px solid rgba(0, 170, 238, 0.1);
+  border-bottom-right-radius: 16px;
 }

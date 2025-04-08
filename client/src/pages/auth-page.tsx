@@ -64,40 +64,54 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
-      <SouthAfricanPattern />
+    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50 sa-pattern-bg">
       
       {/* Left column - Auth Form */}
       <div className="flex-1 flex flex-col justify-center px-4 py-12 sm:px-6 lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary font-poppins">Sqamtho</h1>
+            <h1 className="text-4xl font-bold text-primary font-poppins tracking-wide">Sqamtho</h1>
+            <div className="h-1 w-12 bg-gradient-to-r from-primary via-accent to-secondary mx-auto my-3 rounded-full"></div>
             <p className="mt-2 text-sm text-gray-600">
               Connect with friends and the South African community
             </p>
           </div>
 
           <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-2 w-full mb-6">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+            <TabsList className="grid grid-cols-2 w-full mb-6 bg-primary/5 p-1 rounded-lg">
+              <TabsTrigger 
+                value="login" 
+                className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-md transition-all duration-200"
+              >
+                Login
+              </TabsTrigger>
+              <TabsTrigger 
+                value="register" 
+                className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm rounded-md transition-all duration-200"
+              >
+                Register
+              </TabsTrigger>
             </TabsList>
             
             {/* Login Tab */}
             <TabsContent value="login">
-              <div className="bg-white py-8 px-6 shadow rounded-lg">
+              <div className="bg-white py-8 px-6 shadow-lg rounded-xl border border-gray-100">
                 <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-6">
+                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-5">
                     <FormField
                       control={loginForm.control}
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <FormLabel className="text-gray-700">Username</FormLabel>
                           <FormControl>
-                            <Input placeholder="username" {...field} />
+                            <Input 
+                              placeholder="Enter your username" 
+                              className="rounded-lg border-gray-200 focus:border-primary focus:ring-primary/20" 
+                              {...field} 
+                            />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-500 text-sm" />
                         </FormItem>
                       )}
                     />
@@ -107,39 +121,49 @@ export default function AuthPage() {
                       name="password"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Password</FormLabel>
+                          <div className="flex justify-between items-center">
+                            <FormLabel className="text-gray-700">Password</FormLabel>
+                            <a href="#" className="text-xs text-primary hover:underline">Forgot password?</a>
+                          </div>
                           <FormControl>
-                            <Input type="password" placeholder="********" {...field} />
+                            <Input 
+                              type="password" 
+                              placeholder="Enter your password" 
+                              className="rounded-lg border-gray-200 focus:border-primary focus:ring-primary/20" 
+                              {...field} 
+                            />
                           </FormControl>
-                          <FormMessage />
+                          <FormMessage className="text-red-500 text-sm" />
                         </FormItem>
                       )}
                     />
                     
-                    <Button
-                      type="submit"
-                      className="w-full bg-primary hover:bg-primary/90"
-                      disabled={loginMutation.isPending}
-                    >
-                      {loginMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Logging in...
-                        </>
-                      ) : (
-                        "Login"
-                      )}
-                    </Button>
+                    <div className="pt-2">
+                      <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-medium py-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-200"
+                        disabled={loginMutation.isPending}
+                      >
+                        {loginMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Signing in...
+                          </>
+                        ) : (
+                          "Sign in to your account"
+                        )}
+                      </Button>
+                    </div>
                   </form>
                 </Form>
                 
-                <div className="mt-6">
+                <div className="mt-8">
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300" />
+                      <div className="w-full border-t border-gray-200" />
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
+                      <span className="px-2 bg-white text-gray-500">New to Sqamtho?</span>
                     </div>
                   </div>
                   
@@ -147,10 +171,10 @@ export default function AuthPage() {
                     <Button
                       type="button"
                       variant="outline"
-                      className="w-full"
+                      className="w-full border-primary text-primary hover:bg-primary/5"
                       onClick={() => setActiveTab("register")}
                     >
-                      Create new account
+                      Create a new account
                     </Button>
                   </div>
                 </div>
@@ -159,64 +183,86 @@ export default function AuthPage() {
             
             {/* Register Tab */}
             <TabsContent value="register">
-              <div className="bg-white py-8 px-6 shadow rounded-lg">
+              <div className="bg-white py-8 px-6 shadow-lg rounded-xl border border-gray-100">
                 <Form {...registerForm}>
-                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-6">
-                    <FormField
-                      control={registerForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Username</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Choose a username" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-5">
+                    <div className="flex flex-col gap-5 sm:flex-row sm:gap-4">
+                      <FormField
+                        control={registerForm.control}
+                        name="username"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="text-gray-700">Username</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="Choose a username" 
+                                className="rounded-lg border-gray-200 focus:border-primary focus:ring-primary/20"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage className="text-red-500 text-sm" />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={registerForm.control}
+                        name="displayName"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="text-gray-700">Display Name</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="Your full name" 
+                                className="rounded-lg border-gray-200 focus:border-primary focus:ring-primary/20"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage className="text-red-500 text-sm" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     
-                    <FormField
-                      control={registerForm.control}
-                      name="displayName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Display Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your full name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={registerForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Create a password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={registerForm.control}
-                      name="confirmPassword"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Confirm Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" placeholder="Confirm your password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="flex flex-col gap-5 sm:flex-row sm:gap-4">
+                      <FormField
+                        control={registerForm.control}
+                        name="password"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="text-gray-700">Password</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="password" 
+                                placeholder="Create a password" 
+                                className="rounded-lg border-gray-200 focus:border-primary focus:ring-primary/20"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage className="text-red-500 text-sm" />
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={registerForm.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel className="text-gray-700">Confirm Password</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="password" 
+                                placeholder="Confirm your password" 
+                                className="rounded-lg border-gray-200 focus:border-primary focus:ring-primary/20"
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage className="text-red-500 text-sm" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     
                     <FormField
                       control={registerForm.control}
@@ -225,11 +271,16 @@ export default function AuthPage() {
                         const { value, ...restField } = field;
                         return (
                           <FormItem>
-                            <FormLabel>Bio (Optional)</FormLabel>
+                            <FormLabel className="text-gray-700">Bio (Optional)</FormLabel>
                             <FormControl>
-                              <Input placeholder="Tell us about yourself" {...restField} value={value || ""} />
+                              <Input 
+                                placeholder="Tell us about yourself" 
+                                className="rounded-lg border-gray-200 focus:border-primary focus:ring-primary/20"
+                                {...restField} 
+                                value={value || ""} 
+                              />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-500 text-sm" />
                           </FormItem>
                         );
                       }}
@@ -242,11 +293,16 @@ export default function AuthPage() {
                         const { value, ...restField } = field;
                         return (
                           <FormItem>
-                            <FormLabel>Location (Optional)</FormLabel>
+                            <FormLabel className="text-gray-700">Location (Optional)</FormLabel>
                             <FormControl>
-                              <Input placeholder="Your city or province" {...restField} value={value || ""} />
+                              <Input 
+                                placeholder="Your city or province" 
+                                className="rounded-lg border-gray-200 focus:border-primary focus:ring-primary/20"
+                                {...restField} 
+                                value={value || ""} 
+                              />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-500 text-sm" />
                           </FormItem>
                         );
                       }}
@@ -259,7 +315,7 @@ export default function AuthPage() {
                         const { value, ...restField } = field;
                         return (
                           <FormItem>
-                            <FormLabel>Profile Picture (Optional)</FormLabel>
+                            <FormLabel className="text-gray-700">Profile Picture (Optional)</FormLabel>
                             <FormControl>
                               <FileUpload 
                                 onFileSelect={(fileData) => {
@@ -268,33 +324,35 @@ export default function AuthPage() {
                                 defaultValue={value || ""}
                               />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-500 text-sm" />
                           </FormItem>
                         );
                       }}
                     />
                     
-                    <Button
-                      type="submit"
-                      className="w-full bg-primary hover:bg-primary/90"
-                      disabled={registerMutation.isPending}
-                    >
-                      {registerMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating Account...
-                        </>
-                      ) : (
-                        "Create Account"
-                      )}
-                    </Button>
+                    <div className="pt-2">
+                      <Button
+                        type="submit"
+                        className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white font-medium py-2.5 rounded-lg shadow-sm hover:shadow transition-all duration-200"
+                        disabled={registerMutation.isPending}
+                      >
+                        {registerMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Creating your account...
+                          </>
+                        ) : (
+                          "Join Sqamtho today"
+                        )}
+                      </Button>
+                    </div>
                   </form>
                 </Form>
                 
-                <div className="mt-6">
+                <div className="mt-8">
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300" />
+                      <div className="w-full border-t border-gray-200" />
                     </div>
                     <div className="relative flex justify-center text-sm">
                       <span className="px-2 bg-white text-gray-500">Already have an account?</span>
@@ -305,10 +363,10 @@ export default function AuthPage() {
                     <Button
                       type="button"
                       variant="outline"
-                      className="w-full"
+                      className="w-full border-primary text-primary hover:bg-primary/5"
                       onClick={() => setActiveTab("login")}
                     >
-                      Login to existing account
+                      Sign in to your account
                     </Button>
                   </div>
                 </div>
@@ -319,60 +377,67 @@ export default function AuthPage() {
       </div>
       
       {/* Right column - Hero */}
-      <div className="hidden md:flex md:w-1/2 bg-primary/5 flex-col justify-center px-4 py-12 sm:px-6 lg:px-20 xl:px-24 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0">
-          <SouthAfricanPattern />
-        </div>
+      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-white to-primary/5 flex-col justify-center px-4 py-12 sm:px-6 lg:px-20 xl:px-24 relative overflow-hidden">
+        <SouthAfricanPattern className="absolute top-0 left-0 right-0 h-4" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-primary/20 to-transparent rounded-full blur-3xl -mr-20 -mb-20"></div>
+        <div className="absolute top-20 left-10 w-64 h-64 bg-gradient-to-br from-secondary/20 to-transparent rounded-full blur-3xl"></div>
         
         <div className="relative z-10 max-w-xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 font-poppins">Welcome to Sqamtho</h1>
-            <SouthAfricanAccent className="my-4" />
-            <p className="mt-4 text-xl text-gray-600">
-              South Africa's own social platform that brings people together.
+          <div className="mb-12">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-medium text-sm mb-4">South Africa's Premier Social Network</span>
+            <h1 className="text-5xl font-bold text-gray-900 font-poppins leading-tight">Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Sqamtho</span></h1>
+            <div className="h-1.5 w-20 bg-gradient-to-r from-primary via-accent to-secondary my-6 rounded-full"></div>
+            <p className="mt-4 text-xl text-gray-600 leading-relaxed">
+              Connect with friends, share moments, and build communities in an authentic South African experience.
             </p>
           </div>
           
-          <div className="space-y-8">
-            <div className="flex items-start">
-              <div className="flex-shrink-0 bg-primary/10 p-3 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="space-y-6">
+            <div className="flex items-start p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
+              <div className="flex-shrink-0 bg-gradient-to-br from-primary to-primary/70 p-3 rounded-xl shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
                 </svg>
               </div>
               <div className="ml-4">
-                <h2 className="text-lg font-medium text-gray-900">Connect with Friends</h2>
-                <p className="mt-1 text-gray-600">Stay in touch with friends and family, share updates and photos.</p>
+                <h2 className="text-lg font-semibold text-gray-900">Connect with Friends</h2>
+                <p className="mt-1 text-gray-600">Build relationships, share updates, and stay connected with your community across South Africa.</p>
               </div>
             </div>
             
-            <div className="flex items-start">
-              <div className="flex-shrink-0 bg-secondary/10 p-3 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex items-start p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
+              <div className="flex-shrink-0 bg-gradient-to-br from-secondary to-secondary/70 p-3 rounded-xl shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                 </svg>
               </div>
               <div className="ml-4">
-                <h2 className="text-lg font-medium text-gray-900">Real-time Messaging</h2>
-                <p className="mt-1 text-gray-600">Send private messages, create group chats, and stay connected on the go.</p>
+                <h2 className="text-lg font-semibold text-gray-900">Real-time Messaging</h2>
+                <p className="mt-1 text-gray-600">Instantly chat with friends, create group conversations, and share media seamlessly.</p>
               </div>
             </div>
             
-            <div className="flex items-start">
-              <div className="flex-shrink-0 bg-accent/10 p-3 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex items-start p-4 rounded-xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
+              <div className="flex-shrink-0 bg-gradient-to-br from-accent to-accent/70 p-3 rounded-xl shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
               <div className="ml-4">
-                <h2 className="text-lg font-medium text-gray-900">Join Communities</h2>
-                <p className="mt-1 text-gray-600">Find groups that match your interests and connect with like-minded South Africans.</p>
+                <h2 className="text-lg font-semibold text-gray-900">Join Communities</h2>
+                <p className="mt-1 text-gray-600">Find local groups that match your interests and connect with like-minded South Africans.</p>
               </div>
             </div>
           </div>
           
-          <div className="mt-12 text-center text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} Sqamtho · South Africa's Social Platform
+          <div className="mt-12 text-center">
+            <div className="inline-flex items-center space-x-1 text-primary/80 font-medium">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              <span>2,350+ users have joined Sqamtho today</span>
+            </div>
+            <div className="mt-4 text-gray-500 text-sm">
+              &copy; {new Date().getFullYear()} Sqamtho · South Africa's Social Platform
+            </div>
           </div>
         </div>
       </div>

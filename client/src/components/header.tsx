@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Search, Bell, MessageCircle, ChevronDown } from "lucide-react";
+import { Search, Bell, MessageCircle, ChevronDown, Home, Compass, Users, Calendar } from "lucide-react";
 import { useState } from "react";
 import { 
   DropdownMenu, 
@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { SouthAfricanPattern } from "./ui/south-african-pattern";
 
 export default function Header() {
@@ -30,16 +31,20 @@ export default function Header() {
   return (
     <>
       {/* Mobile Header */}
-      <header className="md:hidden bg-white shadow-sm z-30 fixed top-0 left-0 right-0">
-        <SouthAfricanPattern />
-        <div className="px-4 py-2">
+      <header className="md:hidden bg-white shadow-md z-30 fixed top-0 left-0 right-0">
+        <SouthAfricanPattern className="h-2" />
+        <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center">
-              <span className="text-xl font-bold text-primary font-poppins">Sqamtho</span>
+              <span className="text-xl font-bold text-primary font-poppins tracking-wide">Sqamtho</span>
             </Link>
-            <div className="flex items-center">
-              <button className="p-2 text-gray-600 hover:text-primary">
-                <Search className="h-6 w-6" />
+            <div className="flex items-center space-x-2">
+              <button className="p-2 rounded-full bg-gray-50 text-gray-600 hover:bg-primary/10 hover:text-primary">
+                <Search className="h-5 w-5" />
+              </button>
+              <button className="p-2 rounded-full bg-gray-50 text-gray-600 hover:bg-primary/10 hover:text-primary relative">
+                <Bell className="h-5 w-5" />
+                <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-secondary" />
               </button>
             </div>
           </div>
@@ -47,78 +52,97 @@ export default function Header() {
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:block fixed top-0 left-0 right-0 bg-white shadow-sm z-40">
-        <SouthAfricanPattern />
+      <header className="hidden md:block fixed top-0 left-0 right-0 bg-white shadow-md z-40">
+        <SouthAfricanPattern className="h-2" />
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
-                <span className="text-2xl font-bold text-primary font-poppins">Sqamtho</span>
+                <span className="text-2xl font-bold text-primary tracking-wide">Sqamtho</span>
               </Link>
-              <div className="hidden md:block ml-10">
-                <div className="flex items-center space-x-4">
-                  <Link href="/" className={`${location === "/" ? "text-primary" : "text-gray-600 hover:text-primary"} font-medium`}>
-                    Home
+              <div className="ml-10">
+                <div className="flex items-center space-x-2">
+                  <Link href="/" className={`nav-item flex items-center space-x-2 ${location === "/" ? "nav-item-active" : ""}`}>
+                    <Home className="h-5 w-5" />
+                    <span>Home</span>
                   </Link>
-                  <Link href="/explore" className={`${location === "/explore" ? "text-primary" : "text-gray-600 hover:text-primary"} font-medium`}>
-                    Explore
+                  <Link href="/explore" className={`nav-item flex items-center space-x-2 ${location === "/explore" ? "nav-item-active" : ""}`}>
+                    <Compass className="h-5 w-5" />
+                    <span>Explore</span>
                   </Link>
-                  <Link href="/groups" className={`${location === "/groups" ? "text-primary" : "text-gray-600 hover:text-primary"} font-medium`}>
-                    Groups
+                  <Link href="/groups" className={`nav-item flex items-center space-x-2 ${location === "/groups" ? "nav-item-active" : ""}`}>
+                    <Users className="h-5 w-5" />
+                    <span>Groups</span>
                   </Link>
-                  <Link href="/events" className={`${location === "/events" ? "text-primary" : "text-gray-600 hover:text-primary"} font-medium`}>
-                    Events
+                  <Link href="/events" className={`nav-item flex items-center space-x-2 ${location === "/events" ? "nav-item-active" : ""}`}>
+                    <Calendar className="h-5 w-5" />
+                    <span>Events</span>
                   </Link>
                 </div>
               </div>
             </div>
-            <div className="hidden md:block">
-              <div className="ml-4 flex items-center">
-                <form onSubmit={handleSearch} className="relative">
-                  <input 
-                    type="text" 
-                    placeholder="Search Sqamtho..." 
-                    className="w-64 px-4 py-2 rounded-full bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    <Search className="h-5 w-5" />
-                  </button>
-                </form>
-                <button className="ml-4 relative text-gray-600 hover:text-primary">
-                  <Bell className="h-6 w-6" />
-                  <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-secondary text-white text-xs flex items-center justify-center">3</span>
+            <div className="flex items-center">
+              <form onSubmit={handleSearch} className="relative">
+                <input 
+                  type="text" 
+                  placeholder="Search Sqamtho..." 
+                  className="w-64 px-4 py-2 rounded-full bg-gray-100 border-0 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all duration-200"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary transition-colors duration-200">
+                  <Search className="h-5 w-5" />
                 </button>
-                <Link href="/messages" className="ml-4 relative text-gray-600 hover:text-primary">
-                  <MessageCircle className="h-6 w-6" />
-                  <span className="absolute top-0 right-0 h-4 w-4 rounded-full bg-secondary text-white text-xs flex items-center justify-center">5</span>
+              </form>
+              <div className="relative ml-4">
+                <button className="relative p-2 bg-gray-100 rounded-full text-gray-600 hover:bg-primary/10 hover:text-primary transition-all duration-200">
+                  <Bell className="h-5 w-5" />
+                  {/* Notification badge with animation */}
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-secondary text-white text-xs flex items-center justify-center animate-pulse">3</span>
+                </button>
+              </div>
+              <div className="relative ml-2">
+                <Link href="/messages" className="relative p-2 bg-gray-100 rounded-full text-gray-600 hover:bg-primary/10 hover:text-primary transition-all duration-200 block">
+                  <MessageCircle className="h-5 w-5" />
+                  {/* Message badge with animation */}
+                  <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-secondary text-white text-xs flex items-center justify-center animate-pulse">5</span>
                 </Link>
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="ml-4 relative flex items-center">
-                    <Avatar className="h-8 w-8">
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="ml-4 flex items-center p-1.5 rounded-full hover:bg-gray-100 cursor-pointer transition-colors duration-200">
+                    <Avatar className="h-8 w-8 ring-2 ring-primary/20">
                       <AvatarImage src={user?.profilePicture} alt={user?.displayName || user?.username} />
-                      <AvatarFallback className="bg-primary text-white">
+                      <AvatarFallback className="bg-primary/90 text-white">
                         {user?.displayName?.charAt(0) || user?.username?.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="ml-2 text-sm font-medium">{user?.displayName?.split(' ')[0] || user?.username}</span>
-                    <ChevronDown className="h-4 w-4 ml-1 text-gray-500" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                      <Link href="/profile" className="cursor-pointer">Profile</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/settings" className="cursor-pointer">Settings</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                    <div className="ml-2 mr-1">
+                      <span className="text-sm font-medium block leading-tight">{user?.displayName?.split(' ')[0] || user?.username}</span>
+                      <span className="text-xs text-gray-500 block leading-tight">Online</span>
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 sa-border">
+                  <DropdownMenuItem asChild className="flex items-center">
+                    <Link href="/profile" className="cursor-pointer w-full">
+                      <div className="font-medium">Profile</div>
+                      <div className="text-xs text-gray-500">View your public profile</div>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="flex items-center">
+                    <Link href="/settings" className="cursor-pointer w-full">
+                      <div className="font-medium">Settings</div>
+                      <div className="text-xs text-gray-500">Manage your preferences</div>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
