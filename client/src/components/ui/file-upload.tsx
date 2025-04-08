@@ -13,7 +13,6 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
   const [preview, setPreview] = useState<string | null>(defaultValue || null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -41,16 +40,29 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
     setPreview(null);
     onFileSelect(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
-    if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();
   };
   
+  // Create a new input element that directly opens the camera
   const triggerCameraInput = () => {
-    // We use a different input specifically for camera capture
-    cameraInputRef.current?.click();
+    // On mobile, we need to create a new input each time to reliably trigger the camera
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.capture = 'environment'; // This tells mobile devices to use the camera
+    
+    input.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files && target.files[0]) {
+        handleFileChange({target} as ChangeEvent<HTMLInputElement>);
+      }
+    };
+    
+    // Trigger the file selection dialog
+    input.click();
   };
 
   return (
@@ -81,16 +93,6 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
           type="file"
           accept="image/*"
           ref={fileInputRef}
-          onChange={handleFileChange}
-          className="hidden"
-        />
-        
-        {/* Dedicated camera input with 'capture' attribute set to 'environment' (back camera) */}
-        <Input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          ref={cameraInputRef}
           onChange={handleFileChange}
           className="hidden"
         />
