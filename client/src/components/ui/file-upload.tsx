@@ -1,4 +1,4 @@
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, { useState, useRef, useEffect, ChangeEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Camera, Upload, X, Check } from "lucide-react";
@@ -13,6 +13,28 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
   const [preview, setPreview] = useState<string | null>(defaultValue || null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Dynamic device detection that runs on client side
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  
+  // Check for mobile device when component mounts
+  useEffect(() => {
+    const checkMobile = () => {
+      // More comprehensive mobile detection using regex patterns for mobile devices
+      const userAgentIsMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const touchPointTest = "maxTouchPoints" in navigator && navigator.maxTouchPoints > 2;
+      const mobileInUserAgent = /Mobi/i.test(navigator.userAgent);
+      
+      // Combine all detection methods
+      setIsMobileDevice(userAgentIsMobile || (touchPointTest && mobileInUserAgent));
+    };
+    
+    checkMobile();
+    
+    // Recheck if window resizes (might be a tablet switching orientation)
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -52,16 +74,15 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
     const input = document.createElement('input');
     input.type = 'file';
     
-    // For best cross-platform compatibility:
-    // - On mobile, 'image/*' + 'capture' attribute opens the camera directly
-    // - On desktops, we need to include 'video/*' to hint at camera access
-    input.accept = 'image/*, video/*';
-    
-    // On supported mobile browsers, this will prefer the camera
-    // Note: In desktop browsers, this may not do anything special
-    if (navigator.userAgent.match(/Android|iPhone|iPad|iPod/i)) {
-      // Use environment (back) camera on mobile devices
-      input.setAttribute('capture', 'environment');
+    if (isMobileDevice) {
+      // On mobile devices: directly open the camera
+      input.accept = 'image/*';
+      input.setAttribute('capture', 'environment'); // Use back camera
+      console.log('Opening camera on mobile device');
+    } else {
+      // On desktop/laptop: open file selection but prioritize images/video
+      input.accept = 'image/*, video/*';
+      console.log('Opening file selector on desktop/laptop');
     }
     
     input.onchange = (e) => {
@@ -93,10 +114,13 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
           variant="outline" 
           onClick={triggerCameraInput}
           className="flex-1"
-          title="On desktop, this will open your file browser to select an image. On mobile devices, this will open your camera app."
+          title={isMobileDevice 
+            ? "Opens your device camera to take a photo" 
+            : "Opens file browser to select an image file"
+          }
         >
           <Camera className="h-4 w-4 mr-2" />
-          {navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) ? "Take Photo" : "Camera/Photo"}
+          {isMobileDevice ? "Take Photo" : "Camera/Photo"}
         </Button>
         
         {/* File input for regular uploads */}
@@ -110,9 +134,9 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
       </div>
       
       <div className="text-xs text-gray-500 mt-1 text-center">
-        {navigator.userAgent.match(/Android|iPhone|iPad|iPod/i) 
+        {isMobileDevice 
           ? "Camera access requires permission from your device" 
-          : "On desktop, both buttons open the file selector. On mobile, Camera opens your device camera."}
+          : "On desktop computers, both buttons open the file selector. Camera access is limited on desktop browsers."}
       </div>
       
       {preview && (
