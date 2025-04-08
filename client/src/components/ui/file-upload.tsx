@@ -41,13 +41,60 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
     if (!file) return;
 
     setIsUploading(true);
+    
+    // Compress image before uploading
+    const img = new Image();
     const reader = new FileReader();
     
     reader.onloadend = () => {
-      const result = reader.result as string;
-      setPreview(result);
-      onFileSelect(result);
-      setIsUploading(false);
+      img.onload = () => {
+        // Create a canvas to compress the image
+        const canvas = document.createElement('canvas');
+        
+        // Calculate dimensions while maintaining aspect ratio
+        let width = img.width;
+        let height = img.height;
+        
+        // Resize large images to reduce file size
+        const MAX_WIDTH = 1200;
+        const MAX_HEIGHT = 1200;
+        
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height = Math.round(height * (MAX_WIDTH / width));
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width = Math.round(width * (MAX_HEIGHT / height));
+            height = MAX_HEIGHT;
+          }
+        }
+        
+        // Set canvas dimensions
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        // Convert to compressed JPEG format
+        const compressedImage = canvas.toDataURL('image/jpeg', 0.7);
+        
+        // Update state with compressed image
+        setPreview(compressedImage);
+        onFileSelect(compressedImage);
+        setIsUploading(false);
+      };
+      
+      img.onerror = () => {
+        console.error('Error processing image');
+        setIsUploading(false);
+      };
+      
+      // Set the image source to the file reader result
+      img.src = reader.result as string;
     };
     
     reader.onerror = () => {
@@ -157,8 +204,8 @@ export function FileUpload({ onFileSelect, defaultValue, className }: FileUpload
           // Draw the current video frame to the canvas
           canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height);
           
-          // Convert to data URL
-          const imageData = canvas.toDataURL('image/png');
+          // Convert to data URL with JPEG format and compression
+          const imageData = canvas.toDataURL('image/jpeg', 0.7); // 70% quality for smaller size
           
           // Set as preview and update state
           setPreview(imageData);
