@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/header";
-import MobileNavigation from "@/components/mobile-navigation";
-import LeftSidebar from "@/components/left-sidebar";
+import Layout from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { SouthAfricanPattern } from "@/components/ui/south-african-pattern";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MapPin, Calendar, Users, Link2, Edit, Camera } from "lucide-react";
+import { MapPin, Calendar, Users, Edit, Camera } from "lucide-react";
 import PostCard from "@/components/post-card";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
+import FamilyTree from "@/components/family-tree";
 
 interface Post {
   id: number;
@@ -44,16 +43,39 @@ interface Post {
 export default function ProfilePage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("posts");
+
+  // Mock family data - in a real app, this would come from an API
+  const familyData = {
+    id: user?.id || 1,
+    name: user?.displayName || user?.username || "Current User",
+    relationship: "You",
+    profilePicture: user?.profilePicture || undefined,
+    birthYear: 1990,
+    children: [
+      {
+        id: 2,
+        name: "Sarah Johnson",
+        relationship: "Sister",
+        birthYear: 1992
+      },
+      {
+        id: 3,
+        name: "Michael Johnson",
+        relationship: "Brother",
+        birthYear: 1988
+      }
+    ]
+  };
   
   // Fetch user's posts
   const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
-    queryKey: ["/api/posts"],
+    queryKey: ["posts"],
     select: (data) => data.filter(post => post.author.id === user?.id),
   });
   
   // Fetch user's friends
   const { data: friends = [], isLoading: friendsLoading } = useQuery<any[]>({
-    queryKey: ["/api/friends"],
+    queryKey: ["friends"],
     select: (data) => data.filter(friend => friend.status === 'accepted'),
   });
   
@@ -64,23 +86,23 @@ export default function ProfilePage() {
     : "January 2023";
 
   return (
-    <>
-      <Header />
-      <MobileNavigation />
-      
-      <main className="container mx-auto pt-20 pb-20 md:pt-24 md:pb-8 px-4 md:flex">
-        <LeftSidebar />
-        
-        <div className="flex-1 w-full md:px-4 lg:w-3/5 mx-auto">
+    <Layout>
           {/* Profile Header */}
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-4">
-            {/* Cover Photo */}
-            <div className="h-48 bg-gradient-to-r from-primary/30 to-accent/30 relative">
-              <SouthAfricanPattern className="absolute bottom-0 left-0 right-0" />
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute top-4 right-4 bg-white bg-opacity-80 hover:bg-opacity-100"
+          <div className="max-w-6xl mx-auto bg-background">
+            {/* Cover Image */}
+            <div className="relative h-64 bg-gray-200 overflow-hidden rounded-lg">
+              {user.coverImage ? (
+                <img
+                  src={user.coverImage}
+                  alt="Cover"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <SouthAfricanPattern className="w-full h-full opacity-50" />
+              )}
+              <Button 
+                className="absolute bottom-4 right-4 bg-white/80 hover:bg-white"
+                variant="secondary"
               >
                 <Camera className="h-4 w-4 mr-2" />
                 Update Cover
@@ -88,12 +110,12 @@ export default function ProfilePage() {
             </div>
             
             {/* Profile Info */}
-            <div className="px-6 pb-6 relative">
+            <div className="px-4 md:px-6 pb-6 relative">
               <div className="flex flex-col md:flex-row md:items-end">
                 <div className="flex-shrink-0 -mt-16 z-10">
-                  <Avatar className="h-32 w-32 border-4 border-white shadow-md">
-                    <AvatarImage src={user.profilePicture} alt={user.displayName || user.username} />
-                    <AvatarFallback className="text-3xl bg-primary text-white">
+                  <Avatar className="h-32 w-32 rounded-md border-4 border-white shadow-md">
+                    <AvatarImage src={user.profilePicture || undefined} alt={user.displayName || user.username}  />
+                    <AvatarFallback className="text-3xl bg-primary text-white rounded-md">
                       {user.displayName ? user.displayName.charAt(0) : user.username.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
@@ -143,7 +165,7 @@ export default function ProfilePage() {
             </div>
             
             {/* Profile Tabs */}
-            <Tabs defaultValue="posts" value={activeTab} onValueChange={setActiveTab}>
+            <Tabs defaultValue="posts" value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="border-t border-gray-200">
                 <TabsList className="flex w-full bg-transparent border-b border-gray-200">
                   <TabsTrigger 
@@ -170,113 +192,83 @@ export default function ProfilePage() {
                   >
                     About
                   </TabsTrigger>
+                  <TabsTrigger 
+                    value="family" 
+                    className="flex-1 py-3 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none"
+                  >
+                    Family
+                  </TabsTrigger>
                 </TabsList>
               </div>
-            </Tabs>
-          </div>
-          
-          {/* Tab Content */}
-          <div className="pb-6">
-            {/* Posts Tab */}
-            {activeTab === "posts" && (
-              <>
-                {postsLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  </div>
-                ) : posts.length === 0 ? (
-                  <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-                    <p className="text-gray-500">No posts yet. Share something with your friends!</p>
-                    <Button className="mt-4">Create your first post</Button>
-                  </div>
-                ) : (
-                  <>
-                    {posts.map((post) => (
-                      <PostCard 
-                        key={post.id}
-                        id={post.id}
-                        content={post.content}
-                        imageUrl={post.imageUrl}
-                        createdAt={post.createdAt}
-                        author={post.author}
-                        comments={post.comments}
-                        reactions={post.reactions}
-                      />
-                    ))}
-                  </>
-                )}
-              </>
-            )}
-            
-            {/* Photos Tab */}
-            {activeTab === "photos" && (
+
+              {/* Tab Content */}
+              <div className="pb-6">
+                <TabsContent value="posts">
+              {postsLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : posts.length === 0 ? (
+                <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+                  <p className="text-gray-500">No posts yet. Share something with your friends!</p>
+                  <Button className="mt-4">Create your first post</Button>
+                </div>
+              ) : (
+                <>
+                  {posts.map((post) => (
+                    <PostCard 
+                      key={post.id}
+                      id={post.id}
+                      content={post.content}
+                      imageUrl={post.imageUrl}
+                      createdAt={post.createdAt}
+                      author={post.author}
+                      comments={post.comments}
+                      reactions={post.reactions}
+                    />
+                  ))}
+                </>
+              )}
+            </TabsContent>
+
+            <TabsContent value="photos">
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-medium mb-4">Your Photos</h2>
-                
-                {posts.some(post => post.imageUrl) ? (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {posts
-                      .filter(post => post.imageUrl)
-                      .map((post) => (
-                        <div key={post.id} className="aspect-square rounded-lg overflow-hidden">
-                          <img 
-                            src={post.imageUrl} 
-                            alt="User upload"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      ))
-                    }
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">No photos yet. Share images in your posts!</p>
-                  </div>
-                )}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {/* Add photo grid here */}
+                  <p className="col-span-full text-center text-gray-500">No photos uploaded yet.</p>
+                </div>
               </div>
-            )}
-            
-            {/* Friends Tab */}
-            {activeTab === "friends" && (
+            </TabsContent>
+
+            <TabsContent value="friends">
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-medium mb-4">Your Friends</h2>
-                
                 {friendsLoading ? (
                   <div className="flex justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   </div>
                 ) : friends.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">No friends yet. Connect with other users!</p>
+                  <div className="text-center">
+                    <p className="text-gray-500">No friends added yet.</p>
                     <Button className="mt-4">Find Friends</Button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                     {friends.map((friend) => (
-                      <div key={friend.friend.id} className="p-4 border border-gray-200 rounded-lg flex flex-col items-center">
-                        <Avatar className="h-16 w-16 mb-2">
-                          <AvatarImage src={friend.friend.profilePicture} alt={friend.friend.displayName} />
-                          <AvatarFallback className="bg-primary text-white">
-                            {friend.friend.displayName.charAt(0)}
-                          </AvatarFallback>
+                      <div key={friend.id} className="flex flex-col items-center text-center">
+                        <Avatar className="h-16 w-16 mb-2 rounded-md">
+                          <AvatarImage src={friend.profilePicture} alt={friend.displayName}  />
+                          <AvatarFallback className="rounded-md">{friend.displayName.charAt(0)}</AvatarFallback>
                         </Avatar>
-                        <h3 className="font-medium text-center">{friend.friend.displayName}</h3>
-                        <p className="text-xs text-gray-500">@{friend.friend.username}</p>
-                        {friend.friend.isOnline && (
-                          <span className="text-xs text-green-500 mt-1 flex items-center">
-                            <span className="h-2 w-2 bg-green-500 rounded-full mr-1"></span>
-                            Online
-                          </span>
-                        )}
+                        <p className="font-medium text-sm">{friend.displayName}</p>
+                        <p className="text-xs text-gray-500">@{friend.username}</p>
                       </div>
                     ))}
                   </div>
                 )}
               </div>
-            )}
+            </TabsContent>
             
-            {/* About Tab */}
-            {activeTab === "about" && (
+            <TabsContent value="about">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-lg font-medium mb-4">About</h2>
                 
@@ -304,10 +296,16 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
-            )}
+            </TabsContent>
+
+            <TabsContent value="family">
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <FamilyTree familyData={familyData} />
+              </div>
+                </TabsContent>
+              </div>
+            </Tabs>
           </div>
-        </div>
-      </main>
-    </>
+    </Layout>
   );
 }
